@@ -1,0 +1,134 @@
+# Predicting Nivolumab Response in Clear Cell Renal Cell Carcinoma Using Gene Expression Signatures
+
+![Python](https://img.shields.io/badge/Python-3.x-blue) ![scikit-learn](https://img.shields.io/badge/scikit--learn-ML-orange) ![License](https://img.shields.io/badge/License-MIT-green)
+
+A machine learning pipeline trained on CheckMate trial RNA-seq data (Braun et al., *Nature Medicine* 2020) and validated externally on E-MTAB-3218 microarray data, using published immune gene signatures as features to predict response to nivolumab (anti-PD-1) therapy in metastatic clear cell renal cell carcinoma (ccRCC).
+
+---
+
+## Overview
+
+Immune checkpoint inhibition with nivolumab has improved outcomes in metastatic ccRCC, but only a subset of patients respond. This project builds a transcriptomic biomarker pipeline to predict treatment response using published gene signature scores, an approach that is biologically interpretable, dimensionality-reduced, and applicable across assay platforms.
+
+Patients were labelled as **Responders** (CR/PR, n=35) or **Non-Responders** (PD, n=68). Stable disease (SD) was excluded to retain a biologically unambiguous binary endpoint. Models were trained on the CheckMate cohort and independently validated on E-MTAB-3218 (Affymetrix microarray), providing a genuine cross-platform, cross-cohort assessment of generalisability.
+
+---
+
+## Key Results
+
+| Model | CV AUROC | External AUROC | Sensitivity | Specificity | AUPRC |
+|---|---|---|---|---|---|
+| Logistic Regression | 0.524 | 0.667 | 0.333 | 0.895 | 0.590 |
+| **SVM (linear) ★** | **0.557** | **0.696** | **0.444** | **0.895** | **0.577** |
+| Random Forest | 0.465 | 0.339 | 0.111 | 0.895 | 0.296 |
+
+★ Best-performing model. External validation on E-MTAB-3218 (n=28; 9 responders, 19 non-responders). Bootstrap 95% CI for SVM AUROC: 0.43–0.91. Random Forest below-chance AUROC (0.339) reflects class-imbalance overfitting in ensemble methods on small high-dimensional datasets, analysed and discussed in the notebook.
+
+---
+
+## Notebooks
+
+| # | Notebook | Description |
+|---|---|---|
+| 01 | `checkmate_overview.ipynb` | CheckMate cohort loading, QC, PCA outlier removal, z-normalisation, gene signature scoring (n=103) |
+| 02 | `emtab_overview.ipynb` | E-MTAB-3218 microarray QC, probe deduplication, z-normalisation, signature scoring |
+| 03 | `feature_sel.ipynb` | Cross-dataset feature alignment, retains only signatures measurable in both platforms |
+| 04 | `Logistic_Reg_model.ipynb` | Regularised LR (L1/L2/ElasticNet), repeated stratified 5×10 CV, Youden-J threshold, bootstrap CIs |
+| 05 | `Support_vector_model.ipynb` | Linear SVM with decision-function scoring, grid search, bootstrap CIs on external validation |
+| 06 | `Random_Frst_model.ipynb` | Random Forest with grid search, negative result analysed and explained |
+| 07 | `model_comparison.ipynb` | Side-by-side ROC/PR curves, confusion matrices, metric summary across all three models |
+
+---
+
+## Data
+
+Raw data files are **not included** in this repository due to access restrictions. Both datasets are publicly available:
+
+- **CheckMate (training):** Braun et al., *Nature Medicine* 2020 RNA-seq and clinical data available via supplementary data of the paper.
+- **E-MTAB-3218 (external validation):** Ross-Macdonald P, Walsh AM, Chasalow SD, et al., Clinical data and Affymetrix microarray data available from [ArrayExpress](https://www.ebi.ac.uk/biostudies/arrayexpress/studies/E-MTAB-3218?accession=E-MTAB-3218).
+
+Once downloaded, place raw files under `data/raw/checkmate/` and `data/raw/emtab/` respectively. Processed feature files (signature scores) are generated and saved to `data/processed/` by the overview notebooks.
+
+---
+
+## Reproduce
+
+### Environment
+
+```bash
+git clone https://github.com/RubySharma49/response-prediction.git
+cd response-prediction
+python -m venv response_predict
+source response_predict/bin/activate        # Windows: response_predict\Scripts\activate
+pip install -r requirements.txt
+```
+
+### Run order
+
+Run notebooks in the following order:
+
+1. `notebooks/checkmate_overview.ipynb` — processes training data, outputs to `data/processed/`
+2. `notebooks/emtab_overview.ipynb` — processes validation data, outputs to `data/processed/`
+3. `notebooks/feature_sel.ipynb` — aligns features, writes final feature files
+4. `notebooks/Logistic_Reg_model.ipynb` - Creating and evaluating Logistic Regression model
+5. `notebooks/Support_vector_model.ipynb`- Creating and evaluating Support Vector Machine model
+6. `notebooks/Random_Frst_model.ipynb`- Creating and evaluating Random Forest model
+7. `notebooks/model_comparison.ipynb`- Comparing all three models with final conclusion
+
+---
+
+## Repository Structure
+
+```
+├── notebooks/              # analysis notebooks (run in order above)
+├── src/
+│   └── utils/              # reusable utility functions (plots, QC, PCA)
+├── data/
+│   ├── raw/                # not tracked, download separately (see Data section)
+│   └── processed/          # generated by overview notebooks
+├── results/                # saved figures and output tables
+├── configs/                # gene signature definitions
+├── requirements.txt
+└── README.md
+```
+
+---
+
+## Gene Signatures
+
+Published gene signatures were used as features rather than individual genes, improving stability, biological interpretability, and enabling cross-platform comparison between RNA-seq training data and microarray validation data. Signatures included:
+
+- **TIS**: Tumour Inflammation Signature (Ayers et al., *JCI* 2017)
+- **T-effector / IFN-γ** (Motzer et al., *IMm151*)
+- **Angiogenesis** (Motzer et al., *IMm151*)
+- **Myeloid inflammation** (Motzer et al., *IMm151*)
+- **FAO/AMPK** (Motzer et al., *IMm151*)
+- **Cell_Cycle** (Motzer et al., *IMm151*)
+- **FAS/Pentose_Phosphate** (Motzer et al., *IMm151*)
+- **Stroma** (Motzer et al., *IMm151*)
+- **Myeloid_Inflammation** (Motzer et al., *IMm151*)
+- **Complement_Cascade** (Motzer et al., *IMm151*)
+- **Omega_oxidation** (Motzer et al., *IMm151*)
+- **SnoRNA** (Motzer et al., *IMm151*)
+
+---
+
+## Limitations
+
+- **Cross-platform validation:** Training used Illumina RNA-seq, external validation used Affymetrix microarray. Z-score normalisation within each platform was used to mitigate platform effects, but residual technical differences may influence results.
+- **Small external cohort:** E-MTAB-3218 validation is n=28 (9 responders). Bootstrap 95% CIs are wide and performance estimates should be interpreted cautiously.
+- **Preprocessing dependency:** Gene-level z-scores were computed across the full training cohort before cross-validation. The numerical impact on signature scores is expected to be negligible at n=103, but strictly represents a minor preprocessing dependency.
+- **SD exclusion:** Patients with stable disease were excluded to retain a biologically unambiguous binary endpoint, reducing sample size and limiting applicability to SD patients.
+
+---
+
+## References
+
+- Braun DA, Hou Y, Bakouny Z, et al. Interplay of somatic alterations and immune infiltration modulates response to PD-1 blockade in advanced clear cell renal cell carcinoma. *Nature Medicine* 2020;26:909–918. https://doi.org/10.1038/s41591-020-0839-y
+- Ross-Macdonald P, Walsh AM, Chasalow SD, et al. Molecular correlates of response to nivolumab at baseline and on treatment in patients with RCC.*Journal for ImmunoTherapy of Cancer* http://dx.doi.org/10.1136/jitc-2020-001506.
+
+---
+
+## Author
+
+**[Ruby Sharma]** · [GitHub](https://github.com/RubySharma49) · 
