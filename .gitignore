@@ -1,14 +1,8 @@
 # data — never commit raw genomic data or large files
 data/raw/
-*.fastq
-*.bam
-*.vcf
-*.h5ad
-*.xlsx
 
-data/clinical_cohort_2026-04-02
-data/*.tar
-data/*.tsv
+data/clinical_cohort_2026-04-02/
+
 
 # model artefacts
 models/*.pkl
@@ -16,11 +10,6 @@ results/*.csv
 
 # docs
 docs/
-*.pdf
-*.xlsx
-*.docs
-*.md
-*.xlsb
 
 # archive
 archive/*.ipynb
