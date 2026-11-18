@@ -4,6 +4,7 @@ data/raw/
 *.bam
 *.vcf
 *.h5ad
+*.xlsx
 
 data/clinical_cohort_2026-04-02
 data/*.tar
@@ -13,11 +14,29 @@ data/*.tsv
 models/*.pkl
 results/*.csv
 
+# docs
+docs/
+*.pdf
+*.xlsx
+*.docs
+*.md
+*.xlsb
+
+# archive
+archive/*.ipynb
+
+
 # Python
 __pycache__/
 *.pyc
 .ipynb_checkpoints/
-.env           
+.env         
+
+# virtual env
+response_predict/
+venv/
+__pycache__/
+*.pyc
 
 # API keys — CRITICAL never commit this
 

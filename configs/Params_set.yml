@@ -1,0 +1,37 @@
+Data_Raw:
+ Checkmate_data: "data/raw/CheckMate/41591_2020_839_MOESM2_ESM.xlsx"
+
+Data_Processed:
+ Checkmate_data: "data/processed/CheckMate_Nivolumab_patients_rnaexp_dnacopy_cell_decovo.xlsx"
+ Clinical_sheet: "clinical_data"
+ RNA_exp_sheet: "RNA_exp"
+ Wes_sheet: "WES_data"
+ DNA_copy_sheet: "Dna_copy_number"
+ Cell_deconvo_sheet: "Cibersort_cell_deconvolution"
+
+Features:
+ Checkmate: "data/processed/CheckMate_model_features.xlsx"
+ Emtab: "data/processed/EMTAB_model_features.xlsx"
+ Final_Checkmate: "data/processed/final_chkmate_features.xlsx"
+ Final_Emtab: "data/processed/final_emtab_features.xlsx"
+
+Model_features:
+ Clinical: ["Age", "MSKCC", "Number_of_Prior_Therapies", "WGII", "ITH","TMB_Counts", "TM_Area","TM_CD8", "TC_CD8", "Received_Prior_Therapy","Treatment_effect"]
+ Mutations: ["VHL", "PBRM1", "SETD2", "BAP1", "MTOR"]
+
+Gene_signatures:
+ T_effector: ["CD8A", "IFNG","EOMES", "PRF1", "CD274"]
+ Angiogenesis: ["VEGFA", "KDR", "ESM1", "CD34", "PECAM1", "ANGPTL4"]
+ FAO/AMPK : ["CPT2", "PPARA", "CPT1A", "PRKAA2", "PDK2", "PRKAB1"]
+ Cell_Cycle: ["CDK2", "CDK4", "CDK6", "BUB1", "BUB1B", "CCNE1", "POLQ", "AURKA", "MKI67", "CCNB2"]
+ FAS/Pentose_Phosphate: ["FASN", "PARP1", "ACACA", "G6PD", "TKT", "TALDO1", "PGD"] 
+ Stroma: ["FAP", "FN1", "COL5A1", "COL5A2", "POSTN", "COL1A1", "COL1A2", "MMP2"]
+ Myeloid_Inflammation: ["CXCL1", "CXCL2", "CXCL3", "CXCL8","IL6", "PTGS2"]
+ Complement_Cascade: ["F2", "C1S", "C9", "C1R", "CFB", "C3"]
+ Omega_oxidation: ["CYP4F3", "CYP8B1", "NNMT", "MGST1", "MAOA", "CYP4F11", "CYP4F2", "CYP4F12"]
+ SnoRNA: ["SNORD38A", "SNORD104", "SNORD32A", "SNORD68", "SNORD66", "SNORD100"]
+ Tumor_inflammation_score: ["PSMB10", "HLA-DQA1", "HLA-DRB1", "CMKLR1", "HLA-E", "NKG7", "CD8A", "CCL5", "CXCL9", "CD27", "CXCR6", "IDO1", "STAT1", "TIGIT", "LAG3", "CD274", "PDCD1LG2", "CD276"]
+
+
+  
+ 
